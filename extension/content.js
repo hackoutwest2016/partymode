@@ -15,5 +15,5 @@ s.src = chrome.extension.getURL('js/bootstrap.min.js');
 (document.head || document.documentElement).appendChild(q);
 
 var p = document.createElement('script');
-s.src = chrome.extension.getURL('js/handlebars-v4.0.5.js');
+s.src = chrome.extension.getURL('js/handlebars.min.js');
 (document.head || document.documentElement).appendChild(p);

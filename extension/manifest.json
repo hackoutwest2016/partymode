@@ -15,7 +15,7 @@
     "js/gmail.js",
     "src/main.js",
     "js/bootstrap.min.js",
-    "js/handlebars-v4.0.5.js"
+    "js/handlebars.min.js"
   ],
   "manifest_version": 2,
   "options_ui": {
