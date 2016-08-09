@@ -2,18 +2,25 @@
     "name": "Gmail.js",
     "version": "0.1",
     "description": "Hello World Gmail chrome extension",
+    "permissions": [
+        "https://mail.google.com/",
+        "https://inbox.google.com/"
+    ],
     "content_scripts": [
         {
             "matches": [
-                "https://mail.google.com/*"
+                "https://mail.google.com/*",
+                "https://inbox.google.com/"
             ],
-            "js": ["content.js"]
+            "js": ["content.js", "js/inboxsdk.js", "src/main.js"],
+            "run_at": "document_end"
         }
     ],
     "web_accessible_resources": [
         "js/jquery-1.9.1.min.js",
-        "js/gmail.js",
-        "src/main.js"
+        "js/inboxsdk.js",
+        "src/main.js",
+        "img/coachella.png"
     ],
     "manifest_version": 2,
     "options_page": "src/options/options.html"
