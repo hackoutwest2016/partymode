@@ -1,7 +1,9 @@
 
 var sidebarForThread = new WeakMap();
 var sidebarTemplatePromise = null;
-
+var festivals = ["coachella", "crssd festival", "hard summer", "colors game over"];
+var keywords = ["order", "total", "ticket", " confirmation", "general", "admission"];
+var testText = "coachella order total";
 InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
 
     // the SDK has been loaded, now do something with it!
@@ -21,13 +23,18 @@ InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
         var threadView = messageView.getThreadView();
         //console.log("subject: ", threadView.getSubject())
         var subjectText = threadView.getSubject();
+        subjectText = subjectText.toLowerCase();
         console.log(subjectText);
         var bodyText = messageView.getBodyElement();
         bodyText = jQuery(bodyText).text();
+        bodyText = bodyText.replace(/\r?\n|\r/g,'');
+        bodyText = bodyText.replace(/ +(?= )/g,'');
+        bodyText = bodyText.toLowerCase();
         console.log(bodyText);
-        var festivals = ["Coachella", "CRSSD FESTIVAL", "HARD SUMMER", "COLORS Game Over"];
-        console.log(isFestival(subjectText, festivals));
-        console.log(isFestival(bodyText, festivals));
+        console.log(isFestival(subjectText));
+        console.log(isFestival(bodyText));
+        console.log(containsKeywords(bodyText));
+        console.log(isFestival(testText));
         addSidebar(threadView);
     });
 });
@@ -81,7 +88,7 @@ function get(url, params, headers) {
         }
 }*/
 
-function isFestival(text, festivals) {
+/*function isFestival(text) {
     for(i = 0; i < festivals.length; i++)
     {
         if(text.indexOf(festivals[i]) !== -1)
@@ -90,4 +97,51 @@ function isFestival(text, festivals) {
         }
     }
     return "None";
+}*/
+function isFestival(text) {
+    var sameFestival = [];
+    for(i = 0; i < festivals.length; i++)
+    {
+        if(text.indexOf(festivals[i]) !== -1)
+        {
+            sameFestival[sameFestival.length] = festivals[i];
+            console.log(festivals[i]);
+        }
+    }
+    if(sameFestival == undefined || sameFestival < 1)
+    {
+        return "None";
+    }
+    var firstFestival = sameFestival[0];
+    for(i = 0; i < sameFestival.length; i++)
+    {
+        if(firstFestival !== sameFestival[i])
+        {
+            return "Many festivals in same mail";
+        }
+    }
+    if(containsKeywords(text))
+    {
+        return firstFestival;
+    }
+    return "Not enough keywords";
+}
+
+function containsKeywords(text) {
+    var nbrOfKeywords = 0;
+    for(i = 0; i < keywords.length; i++)
+    {
+        if(text.indexOf(keywords[i]) !== -1)
+        {
+            nbrOfKeywords++;
+        }
+    }
+    if(nbrOfKeywords > 1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
