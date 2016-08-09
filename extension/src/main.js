@@ -1,16 +1,16 @@
 var gmail;
 
 function refresh(f) {
-  if( (/in/.test(document.readyState)) || (typeof Gmail === undefined) ) {
-    setTimeout('refresh(' + f + ')', 10);
-  } else {
-    f();
-  }
+    if( (/in/.test(document.readyState)) || (typeof Gmail === undefined) ) {
+        setTimeout('refresh(' + f + ')', 10);
+    } else {
+        f();
+    }
 }
 
 var main = function(){
-  gmail = new Gmail();
-  console.log('Hello,', gmail.get.user_email())
+    gmail = new Gmail();
+    console.log('Hello,', gmail.get.user_email())
 }
 
 refresh(main);
