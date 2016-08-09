@@ -27,7 +27,7 @@ InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
         console.log(bodyText);
         var festivals = ["Coachella", "CRSSD FESTIVAL", "HARD SUMMER", "COLORS Game Over"];
         console.log(isFestival(subjectText, festivals));
-        console.log(isFestival(bodyText, festvials));
+        console.log(isFestival(bodyText, festivals));
         addSidebar(threadView);
     });
 });
