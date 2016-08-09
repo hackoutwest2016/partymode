@@ -9,3 +9,7 @@ g.src = chrome.extension.getURL('js/gmail.js');
 var s = document.createElement('script');
 s.src = chrome.extension.getURL('src/main.js');
 (document.head || document.documentElement).appendChild(s);
+
+var q = document.createElement('script');
+s.src = chrome.extension.getURL('js/bootstrap.min.js');
+(document.head || document.documentElement).appendChild(q);

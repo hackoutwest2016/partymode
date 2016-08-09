@@ -1,7 +1,7 @@
 {
   "name": "Gmail.js",
   "version": "0.1",
-  "description": "Hello World Gmail chrome extension",
+  "description": "FestList chrome extension",
   "content_scripts": [
     {
       "matches": [
@@ -14,6 +14,7 @@
     "js/jquery-1.9.1.min.js",
     "js/gmail.js",
     "src/main.js"
+    "js/bootstrap.min.js"
   ],
   "manifest_version": 2,
   "options_page": "src/options/options.html"
