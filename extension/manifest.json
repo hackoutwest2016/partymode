@@ -1,5 +1,5 @@
 {
-  "name": "Gmail.js",
+  "name": "FestList",
   "version": "0.1",
   "description": "FestList chrome extension",
   "content_scripts": [
