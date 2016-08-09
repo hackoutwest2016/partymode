@@ -14,7 +14,7 @@ run: build
 	docker run -p 8080 $(DOCKER_IMAGE_NAME) bash -c "java -jar build/libs/hack-backend-0.0.1-SNAPSHOT.jar"
 
 deploy:
-	docker run -d -p 8080 $(DOCKER_IMAGE_NAME) bash -c "java -jar build/libs/hack-backend-0.0.1-SNAPSHOT.jar"
+	docker run -d -p 8080:8080 $(DOCKER_IMAGE_NAME) bash -c "java -jar build/libs/hack-backend-0.0.1-SNAPSHOT.jar"
 
 clean:
 	@rm -rf build .gradle/
