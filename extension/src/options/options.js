@@ -1,60 +1,132 @@
-$.getJSON('options.json', function(data) {
-    defaultOptions = data
-    initOptions(defaultOptions)
-})
+var OAuthConfig = (function() {
+  'use strict';
 
-function initOptions (defaultOptions) {
-    options = defaultOptions
+  var clientId = '89dbf71baaee455b879272be6ac0a613';
+  var redirectUri;
+  if (location.host === 'localhost:8000') {
+    redirectUri = 'http://localhost:8000/callback.html';
+  } else {
+    redirectUri = 'https://mail.google.com/';
+  }
 
-    for (var key in defaultOptions) {
-        if( localStorage[key] ) { options[key].val = localStorage[key] }
-    }
+  return {
+    clientId: clientId,
+    redirectUri: redirectUri,
+    host: "mail.google.com/"
+  };
+})();
 
-    optionsWrapper = document.getElementById('options')
+var target = window.self === window.top ? window.opener : window.parent;
 
-    for (var key in options) {
-        html  = '<div class=\'option\'><label>' + key + '</label>'
-        html += '<p class=\'description\'>' + options[key].description + '<br><span class=\'help\'>*' + options[key].hint + '</span></p>'
-        html += '<input name=\'' + key + '\' value=\'' + options[key].val +'\' type=\'text\' /></div>'
-        $(optionsWrapper).append(html)
-    }
-
+var hash = window.location.hash;
+if (hash) {
+  var token = window.location.hash.split('&')[0].split('=')[1];
+  target.postMessage(token, OAuthConfig.host);
 }
 
-$(document).on('keypress', '[name=Shortcut], [name=BackgroundShortcut], [name=MuteShortcut]', function(e) {
-    if (e.keyCode == 13 && !e.shiftKey && !e.metaKey && !e.altKey && !e.ctrlKey ) return false
-    code = ''
-    keys = ['shift', 'alt', 'meta', 'ctrl']
-    keys.map(function(key) {
-        if( eval('e.' + key + 'Key' ) ) { code += key + " + " }
-    })
-    code += e.keyCode
-    $(this).val(code)
-    e.preventDefault()
-})
+function login() {
+    return new Promise(function (resolve, reject) {
+        OAuthManager.obtainToken({
+          scopes: [
+              'playlist-read-private',
+              'playlist-modify-public',
+              'playlist-modify-private'
+            ]
+          }).then(function(token) {
+            resolve(onTokenReceived(token));
+            console.log('token: ', token)
+          }).catch(function(error) {
+            console.error(error);
+          });
+      });
+}
 
-$(document).on('keypress', 'input[type]', function(e) {
-    if( e.keyCode == 13 ) {
-        $(this).blur()
-        $('#save').click()
+var OAuthManager = (function() {
+  'use strict';
+
+  function toQueryString(obj) {
+    var parts = [];
+    for (var i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        parts.push(encodeURIComponent(i) +
+                   '=' +
+                   encodeURIComponent(obj[i]));
+      }
     }
-})
+    return parts.join('&');
+  }
 
-$(document).on('click', '#save', function() {
-    fields = []
-    $('input[name]').map(function(i, e) {
-        if( localStorage[e.name] != e.value ) fields.push(e)
-        localStorage[e.name] = e.value
-    })
+  function obtainToken(options) {
+    options = options || {};
 
-    // Update status to let user know options were saved.
-    var save = document.getElementById('save')
-    $('.notice').show()
-    window.scrollTo(0, 10000)
-    save.innerHTML = 'Updated!'
-    $(fields).closest('.option').removeClass('saved').addClass('saved')
-    setTimeout(function() {
-        $(fields).closest('.option').removeClass('saved')
-        save.innerHTML = 'Save'
-    }, 2050)
-})
+    var promise = new Promise(function(resolve, reject) {
+
+      var authWindow = null,
+      pollAuthWindowClosed = null;
+
+      function receiveMessage(event) {
+        clearInterval(pollAuthWindowClosed);
+        if (event.origin !== OAuthConfig.host) {
+          reject();
+          return;
+        }
+        if (authWindow !== null) {
+            authWindow.close();
+            authWindow = null;
+        }
+
+        window.removeEventListener('message',
+                                   receiveMessage,
+                                   false);
+
+        // todo: manage case when the user rejects the oauth
+        // or the oauth fails to obtain a token
+        resolve(event.data);
+      }
+
+      window.addEventListener('message',
+                              receiveMessage,
+                              false);
+
+      var width = 400,
+      height = 600,
+      left = (screen.width / 2) - (width / 2),
+      top = (screen.height / 2) - (height / 2);
+
+      /*jshint camelcase:false*/
+      var params = {
+        client_id: OAuthConfig.clientId,
+        redirect_uri: OAuthConfig.redirectUri,
+        response_type: 'token'
+      };
+
+      if (options.scopes) {
+        params.scope = options.scopes.join(' ');
+      }
+
+      authWindow = window.open(
+                               'https://accounts.spotify.com/authorize?' + toQueryString(params),
+                               'Spotify',
+                               'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left
+                               );
+
+      pollAuthWindowClosed = setInterval(function() {
+        if (authWindow !== null) {
+          if (authWindow.closed) {
+            clearInterval(pollAuthWindowClosed);
+            reject({message: 'access_denied'});
+          }
+        }
+      }, 1000);
+    });
+
+    return promise;
+  }
+
+  return {
+    obtainToken: obtainToken
+  };
+
+})();
+
+login();
