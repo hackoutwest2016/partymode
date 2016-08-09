@@ -172,7 +172,7 @@ public class PlaylistController {
             addTracksToPlaylist(userId, playlist.getId(), trackUris);
         }
 
-        return "Halo";
+        return playlist.getExternalUrls().get("spotify");
 
     }
 
