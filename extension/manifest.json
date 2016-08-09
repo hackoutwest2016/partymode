@@ -4,10 +4,10 @@
     "description": "Hello World Gmail chrome extension",
     "content_scripts": [
         {
-        "matches": [
-        "https://mail.google.com/*"
-        ],
-        "js": ["content.js"]
+            "matches": [
+                "https://mail.google.com/*"
+            ],
+            "js": ["content.js"]
         }
     ],
     "web_accessible_resources": [
@@ -15,5 +15,6 @@
         "js/gmail.js",
         "src/main.js"
     ],
-    "manifest_version": 2
+    "manifest_version": 2,
+    "options_page": "src/options/options.html"
 }
