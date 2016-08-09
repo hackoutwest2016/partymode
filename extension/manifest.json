@@ -1,25 +1,40 @@
 {
-  "name": "FestList",
-  "version": "0.1",
-  "description": "FestList chrome extension",
-  "content_scripts": [
-    {
-      "matches": [
-        "https://mail.google.com/*"
-      ],
-      "js": ["content.js"]
-    }
-  ],
-  "web_accessible_resources": [
-    "js/jquery-1.9.1.min.js",
-    "js/gmail.js",
-    "src/main.js",
-    "js/bootstrap.min.js",
-    "js/handlebars.min.js"
-  ],
-  "manifest_version": 2,
-  "options_ui": {
-    "page": "src/options/options.html",
-    "chrome_style": true
-  }
+    "name": "Festlist",
+    "version": "0.1",
+    "description": "Festlist adds a smart widget to GMail and Inbox that
+                    automagically creates a playlist for a music festival or
+                    event when you get a confirmation email.",
+    "permissions": [
+        "https://mail.google.com/",
+        "https://inbox.google.com/",
+        "https://upload.wikimedia.org/"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://mail.google.com/*",
+                "https://inbox.google.com/*",
+                "https://upload.wikimedia.org/*"
+            ],
+            "js": [
+                "content.js",
+                "js/jquery-1.9.1.min.js",
+                "js/inboxsdk.js",
+                "js/underscore-min.js",
+                "src/main.js",
+                "src/options/options.js"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "web_accessible_resources": [
+        "js/jquery-1.9.1.min.js",
+        "js/inboxsdk.js",
+        "js/underscore-min.js",
+        "src/main.js",
+        "img/coachella.png",
+        "src/options/options.js"
+    ],
+    "manifest_version": 2,
+    "options_page": "src/options/options.html"
 }
