@@ -1,7 +1,9 @@
 {
-    "name": "Gmail.js",
+    "name": "Festlist",
     "version": "0.1",
-    "description": "Hello World Gmail chrome extension",
+    "description": "Festlist adds a smart widget to GMail and Inbox that
+                    automagically creates a playlist for a music festival or
+                    event when you get a confirmation email.",
     "permissions": [
         "https://mail.google.com/",
         "https://inbox.google.com/"
@@ -12,15 +14,23 @@
                 "https://mail.google.com/*",
                 "https://inbox.google.com/"
             ],
-            "js": ["content.js", "js/inboxsdk.js", "src/main.js"],
+            "js": [
+                "content.js",
+                "js/jquery-1.9.1.min.js",
+                "js/inboxsdk.js",
+                "js/underscore-min.js",
+                "src/main.js"
+            ],
             "run_at": "document_end"
         }
     ],
     "web_accessible_resources": [
         "js/jquery-1.9.1.min.js",
         "js/inboxsdk.js",
+        "js/underscore-min.js",
         "src/main.js",
-        "img/coachella.png"
+        "img/coachella.png",
+        "src/sidebar_template.html"
     ],
     "manifest_version": 2,
     "options_page": "src/options/options.html"

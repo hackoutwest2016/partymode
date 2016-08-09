@@ -1,4 +1,7 @@
 
+var sidebarForThread = new WeakMap();
+var sidebarTemplatePromise = null;
+
 InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
 
     // the SDK has been loaded, now do something with it!
@@ -20,14 +23,42 @@ InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
     });
 });
 
-function addSidebar(threadView) {
-    var el = document.createElement("div");
-    el.innerHTML = 'Hello world!';
+function getEventName(text) {
+    return "Coachella 2016";
+}
 
-    threadView.addSidebarContentPanel({
-        el: el,
-        title: "PARTY HARD",
-        iconUrl: chrome.runtime.getURL('img/coachella.png')
+function addSidebar(threadView) {
+    if (!sidebarForThread.has(threadView)) {
+        sidebarForThread.set(threadView, document.createElement('div'));
+
+        threadView.addSidebarContentPanel({
+            el: sidebarForThread.get(threadView),
+            title: "PARTY HARD"
+        });
+    }
+
+    if (!sidebarTemplatePromise) {
+        sidebarTemplatePromise = get(chrome.runtime.getURL('sidebar_template.html'), null, null);
+    }
+
+    Promise.all([
+        sidebarTemplatePromise
+    ])
+    .then(function(results) {
+        var template = _.template(html);
+        sidebarForThread.get(threadView).innerHTML = sidebarForThread.get(threadView).innerHTML + template({
+            event_pic: "img/coachella.png"
+        });
     });
 }
 
+function get(url, params, headers) {
+    return Promise.resolve(
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: params,
+            headers: headers
+        })
+    );
+}
