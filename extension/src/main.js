@@ -3,7 +3,7 @@ var sidebarForThread = new WeakMap();
 var sidebarTemplatePromise = null;
 var festivals = ["coachella", "crssd festival", "hard summer", "colors game over"];
 var keywords = ["order", "total", "ticket", " confirmation", "general", "admission"];
-var testText = "coachella order total";
+var testText = "coachella coachella crssd festival total";
 InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
 
     // the SDK has been loaded, now do something with it!
@@ -30,10 +30,10 @@ InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
         bodyText = bodyText.replace(/\r?\n|\r/g,'');
         bodyText = bodyText.replace(/ +(?= )/g,'');
         bodyText = bodyText.toLowerCase();
-        console.log(bodyText);
-        console.log(isFestival(subjectText));
-        console.log(isFestival(bodyText));
-        console.log(containsKeywords(bodyText));
+        //console.log(bodyText);
+        //console.log(isFestival(subjectText));
+        //console.log(isFestival(bodyText));
+        //console.log(containsKeywords(bodyText));
         console.log(isFestival(testText));
         addSidebar(threadView);
     });
@@ -98,7 +98,7 @@ function get(url, params, headers) {
     }
     return "None";
 }*/
-function isFestival(text) {
+/*function isFestival(text) {
     var sameFestival = [];
     for(i = 0; i < festivals.length; i++)
     {
@@ -125,6 +125,66 @@ function isFestival(text) {
         return firstFestival;
     }
     return "Not enough keywords";
+}*/
+
+function isFestival(text) {
+    var sameFestival = new Array(festivals.length);
+    for(i = 0; i < festivals.length; i++)
+    {
+        sameFestival[i] = new Array(2)
+        sameFestival[i][0] = festivals[i];
+        sameFestival[i][1] = occurrences(text, festivals[i]);
+        //console.log(sameFestival[i][0] + " " + sameFestival[i][1]);
+    }
+    /*console.log(sameFestival[0][0]);
+    console.log(sameFestival[0][1]);
+    console.log(sameFestival[1][0]);
+    console.log(sameFestival[1][1]);
+    console.log(sameFestival.length);*/
+    var largest1 = new Array(2);
+    largest1[1] = -1;
+    var largest2 = new Array(2);
+    largest2[1] = -1;
+    for(i = 0; i < sameFestival.length; i++)
+    {
+        if(largest1[1] < sameFestival[i][1])
+        {
+            largest2 = largest1;
+            largest1 = sameFestival[i]
+        } else if(largest2[1] < sameFestival[i][1])
+        {
+            largest2 = sameFestival[i];
+        }
+    }
+    /*console.log(largest1);
+    console.log(largest2);*/
+    if(largest1[1] > largest2[1])
+    {
+        if(containsKeywords(text))
+        {
+            return largest1[0];
+        } 
+        else
+        {
+            return "Not enough keywords"
+        }
+    }
+    else
+    {
+        return "Not a festivalmail";
+    }    
+}
+
+function occurrences(string, substring){
+    var n=0;
+    var pos=0;
+
+    while(true){
+        pos=string.indexOf(substring,pos);
+        if(pos!=-1){ n++; pos+=substring.length;}
+        else{break;}
+    }
+    return(n);
 }
 
 function containsKeywords(text) {
