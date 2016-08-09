@@ -14,7 +14,8 @@
     "js/jquery-1.9.1.min.js",
     "js/gmail.js",
     "src/main.js",
-    "js/bootstrap.min.js"
+    "js/bootstrap.min.js",
+    "js/handlebars.min.js"
   ],
   "manifest_version": 2,
   "options_ui": {
