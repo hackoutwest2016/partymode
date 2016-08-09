@@ -11,6 +11,12 @@ all.forEach(function(keyvalue) {
         args[key] = val;
     });
 
+var sidebarForThread = new WeakMap();
+var sidebarTemplatePromise = null;
+var festivals = ["coachella", "crssd festival", "hard summer", "colors game over"];
+var keywords = ["order", "total", "ticket", " confirmation", "general", "admission"];
+var testText = "coachella coachella crssd festival total";
+
 if (typeof(args['access_token']) != 'undefined') {
     // got access token
     console.log('got access token', args['access_token']);
@@ -27,17 +33,17 @@ InboxSDK.load('1.0', 'sdk_asdf123_7bf29a335b').then(function(sdk){
     sdk.Conversations.registerMessageViewHandler(function(messageView) {
         var threadView = messageView.getThreadView();
         var subjectText = threadView.getSubject();
-        console.log(subjectText);
+        subjectText = subjectText.toLowerCase();
         var bodyText = messageView.getBodyElement();
         bodyText = jQuery(bodyText).text();
-        console.log(bodyText);
-        var festivals = ["Coachella", "CRSSD FESTIVAL", "HARD SUMMER", "COLORS Game Over"];
-        f_subject = isFestival(subjectText, festivals);
-        f_body = isFestival(bodyText, festivals);
-        if (f_subject !== "None") {
-            addSidebar(threadView, f_subject);
-        } else if (f_body !== "None") {
-            addSidebar(threadView, f_body);
+
+        bodyText = bodyText.replace(/\r?\n|\r/g,'');
+        bodyText = bodyText.replace(/ +(?= )/g,'');
+        bodyText = bodyText.toLowerCase();
+        festival = isFestival(bodyText);
+        console.log(festival);
+        if (festival !== null) {
+            addSidebar(threadView, festival);
         } else {
             console.log("No festival :(")
         }
@@ -92,11 +98,64 @@ function get(url, params, headers) {
     );
 }
 
-function isFestival(text, festivals) {
+function isFestival(text) {
+    var sameFestival = new Array(festivals.length);
     for(i = 0; i < festivals.length; i++) {
-        if (text.indexOf(festivals[i]) !== -1) {
-            return festivals[i];
+        sameFestival[i] = new Array(2)
+        sameFestival[i][0] = festivals[i];
+        sameFestival[i][1] = occurrences(text, festivals[i]);
+    }
+
+    var largest1 = new Array(2);
+    largest1[1] = -1;
+    var largest2 = new Array(2);
+    largest2[1] = -1;
+    for(i = 0; i < sameFestival.length; i++) {
+        if(largest1[1] < sameFestival[i][1]) {
+            largest2 = largest1;
+            largest1 = sameFestival[i]
+        } else if(largest2[1] < sameFestival[i][1]) {
+            largest2 = sameFestival[i];
         }
     }
-    return "None";
+
+    if(largest1[1] > largest2[1]) {
+        if(containsKeywords(text)) {
+            return largest1[0];
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+
+function occurrences(string, substring){
+    var n=0;
+    var pos=0;
+
+    while(true) {
+        pos=string.indexOf(substring,pos);
+        if(pos!=-1){
+            n++;
+            pos+=substring.length;
+        } else {
+            break;
+        }
+    }
+    return(n);
+}
+
+function containsKeywords(text) {
+    var nbrOfKeywords = 0;
+    for(i = 0; i < keywords.length; i++) {
+        if(text.indexOf(keywords[i]) !== -1) {
+            nbrOfKeywords++;
+        }
+    }
+    if(nbrOfKeywords > 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
