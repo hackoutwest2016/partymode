@@ -19,6 +19,15 @@ InboxSDK.load('1.0', 'sdk_partyhardhow16_d05fc23638').then(function(sdk){
 
     sdk.Conversations.registerMessageViewHandler(function(messageView) {
         var threadView = messageView.getThreadView();
+        //console.log("subject: ", threadView.getSubject())
+        var subjectText = threadView.getSubject();
+        console.log(subjectText);
+        var bodyText = messageView.getBodyElement();
+        bodyText = jQuery(bodyText).text();
+        console.log(bodyText);
+        var festivals = ["Coachella", "CRSSD FESTIVAL", "HARD SUMMER", "COLORS Game Over"];
+        console.log(isFestival(subjectText, festivals));
+        console.log(isFestival(bodyText, festvials));
         addSidebar(threadView);
     });
 });
@@ -61,4 +70,24 @@ function get(url, params, headers) {
             headers: headers
         })
     );
+}
+
+/*function isFestival(text, festivals) {
+        if(text.indexOf(festivals) !== -1)
+        {
+            return festivals;
+        } else {
+            return "None";
+        }
+}*/
+
+function isFestival(text, festivals) {
+    for(i = 0; i < festivals.length; i++)
+    {
+        if(text.indexOf(festivals[i]) !== -1)
+        {
+            return festivals[i];
+        }
+    }
+    return "None";
 }
