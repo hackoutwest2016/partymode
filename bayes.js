@@ -177,6 +177,13 @@ var go = function go() {
     var winner = Bayes.extractWinner(scores);
     document.getElementById("test_result").innerHTML = winner.label;
     document.getElementById("test_probability").innerHTML = winner.score;
+    if (winner.label === "festival") {
+        document.getElementById("festival").style.display = "inline";
+        document.getElementById("nofestival").style.display = "none";
+    } else {
+        document.getElementById("nofestival").style.display = "inline";
+        document.getElementById("festival").style.display = "none";
+    }
     console.log(scores);
 };
 

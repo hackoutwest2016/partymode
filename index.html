@@ -35,17 +35,17 @@
 		<textarea class="form-control" rows="3" placeholder="Let's check out that mail." id="test_phrase"></textarea>
 		<br>
 		<button id="isFestival" type="button" class="btn btn-default center-block btn-lg" onclick="go();">Festival?</button>
-        <h2 class="center-block" id="test_result"></h2>
-        <p class="center-block" id="test_probability"></p>
 		<br>
-		<div style="text-align: center;">
+		  <div style="text-align: center;" id="nofestival">
 			<iframe src="http://giphy.com/embed/l0HlUVTXVcbDao7xC?html5=true" width="480" height="271" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 			<p class="lead"> Unfortunately, it wasn't a festival.</p>
-		</div>
-		<div style="text-align: center;">
+		  </div>
+		  <div style="text-align: center;" id="festival">
 			<iframe src="http://giphy.com/embed/m5YDMdUgGPKMw?html5=true" width="480" height="269" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 			<p class="lead">Guess what? Someone is going to a festival!</p>
-		</div>
+		  </div>
+        <h2 class="center-block" id="test_result"></h2>
+        <p class="center-block" id="test_probability"></p>
     </div>
     <script>
     (function() {

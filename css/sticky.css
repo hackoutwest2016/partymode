@@ -39,6 +39,12 @@ img.spotifySize{
     right: 25px;
 }
 
-.results {
+#festival {
   display: none;
+  text-align: center;
+}
+
+#nofestival {
+  display: none;
+  text-align: center;
 }
