@@ -16,6 +16,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/sticky.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="bayes.js"></script>
   </head>
 
   <body>
@@ -31,9 +32,11 @@
       <button id="getPlayList" type="button" class="btn btn-default center-block btn-lg" onclick="getPlaylist()">Generate!</button>
       <br>
       <p class="lead text-center">Not sure about how much festival your mail is? Let us help. Paste in your mail and we will decide for you.</p>
-      <textarea class="form-control" rows="3" placeholder="Let's check out that mail. "></textarea>
+      <textarea class="form-control" rows="3" placeholder="Let's check out that mail." id="test_phrase"></textarea>
       <br>
-      <button id="isFestival" type="button" class="btn btn-default center-block btn-lg" onclick="">Festival?</button>
+      <button id="isFestival" type="button" class="btn btn-default center-block btn-lg" onclick="go();">Festival?</button>
+      <h2 id="test_result"></h2>
+      <p id="test_probability"></p>
     </div>
     <script>
     (function() {
