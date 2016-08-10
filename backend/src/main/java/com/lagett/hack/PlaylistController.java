@@ -35,17 +35,15 @@ import java.util.List;
 @RestController
 public class PlaylistController {
 
-    private String TOKEN = "BQCI5TVadOQGkIJLNLKoC7HBd3q_3TzXOW6C8sxzhz7C5K2ZWbOfZaxdi2wHmuzan6gm5syPjjrtADszGrmReFv6fqzYaLV2rDKnLi0Vih-dQRrSJAd4_f2pyad-d0rdoDwo_3YnBuR9x1vVVb_xQfkLD-3UD_IX5TxExAnoVMoYhUbttiFEUcXVwKKFqjArm3v5Q5suV4eG-Yr_UFpH8SvvOjwzExyFyNM3";
-
-    private HashMap<String, String> festivals = new HashMap<>();
+//    private String TOKEN = "BQAODknoRoe0WtPtG1RgpiNrRSAHAapFSf_-XiBWP0NI_KZRfFqDBGY_eurBmlVXaeZ23SLCe-Pk6TZOxKdD5uMGmgV3nZ8x7GJq4RAlLBsKoJet3YlCrAycpJ9b9bsZkEyQMCu2FX1_7PvnrPPao9bM04gJbpKnqUaRdI-KL2YX_7S0mPbd9iI51VhFy7fh1bNZ2TRIsUj7aOzH0lKo0NmTPryT31PL6IIt";
 
     @RequestMapping("/playlist")
-    public Playlist getPlaylist(@RequestParam(value="event_name") String eventName, @RequestParam(value = "token", defaultValue = "") String token) throws UnirestException, IOException, WebApiException, InterruptedException {
+    public Playlist getPlaylist(@RequestParam(value="event_name") String eventName, @RequestParam(value = "token") String token) throws UnirestException, IOException, WebApiException, InterruptedException {
         String originalName = eventName;
         eventName = eventName.replaceAll("\\s+","_");
         eventName = eventName.toLowerCase();
 
-        System.out.println(eventName);
+        HashMap<String, String> festivals = new HashMap<>();
 
         // CANT ACCESS THIS CRAP. WHOEVER MADE THE SONGKICK API, YOU SUCK!!!!
         festivals.put("coachella", "23977814"); //2016
@@ -60,12 +58,11 @@ public class PlaylistController {
             throw new IllegalArgumentException("event id cannot be null");
         }
 
-        String tokenToUse;
-        tokenToUse = token.isEmpty() ? TOKEN : token;
+//        String tokenToUse;
+//        tokenToUse = token.isEmpty() ? TOKEN : token;
 
         Api api = Api.builder()
-                .accessToken(tokenToUse)
-                .refreshToken("AQAuNMpZO-peDsAFcY25-HP7zu2L-xX1FITtLtV-Td_4Kv9BVUifjsxjSUOYq3jaqrbJULZFAOVB1NIFP_j0vVh1UauVZTR92tfi9wT0Ncoh9CIFNC1083Cr81gzWa2DPx0")
+                .accessToken(token)
                 .build();
 
         List<String> artistNames = getArtists(eventId);
@@ -74,7 +71,7 @@ public class PlaylistController {
 
         List<String> trackIds = getSpotifyTracks(artists, calcSongsPerArtist(artists.size()), api);
 
-        return new Playlist(createSpotifyPlaylist(trackIds, originalName, api));
+        return new Playlist(createSpotifyPlaylist(trackIds, originalName, api, token));
 
     }
 
@@ -149,7 +146,7 @@ public class PlaylistController {
 
     }
 
-    private String createSpotifyPlaylist(List<String> trackUris, String eventName, Api api) throws IOException, WebApiException, UnirestException {
+    private String createSpotifyPlaylist(List<String> trackUris, String eventName, Api api, String token) throws IOException, WebApiException, UnirestException {
         User user = api.getMe().build().get();
 
         String userId = user.getId();
@@ -164,19 +161,19 @@ public class PlaylistController {
             while(iterator.hasNext()) {
                 currentBatch.add(iterator.next());
                 if (currentBatch.size() == 99) {
-                    addTracksToPlaylist(userId, playlist.getId(), currentBatch);
+                    addTracksToPlaylist(userId, playlist.getId(), currentBatch, token);
                     currentBatch.clear();
                 }
             }
         } else {
-            addTracksToPlaylist(userId, playlist.getId(), trackUris);
+            addTracksToPlaylist(userId, playlist.getId(), trackUris, token);
         }
 
         return playlist.getExternalUrls().get("spotify");
 
     }
 
-    private void addTracksToPlaylist(String userId, String playlistId, List<String> uris) throws UnirestException, JsonProcessingException {
+    private void addTracksToPlaylist(String userId, String playlistId, List<String> uris, String token) throws UnirestException, JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -186,11 +183,11 @@ public class PlaylistController {
 
         HttpResponse<JsonNode> httpResponse = Unirest.post("https://api.spotify.com/v1/users/" + userId + "/playlists/" + playlistId + "/tracks")
                 .header("accept", "application/json")
-                .header("Authorization", "Bearer " + TOKEN)
+                .header("Authorization", "Bearer " + token)
                 .body(jsonBody)
                 .asJson();
 
-        System.out.println(httpResponse);
+        System.out.println(httpResponse.getBody());
     }
 
     private int calcSongsPerArtist(int artists) {
