@@ -22,7 +22,8 @@
                 "js/inboxsdk.js",
                 "js/underscore-min.js",
                 "src/main.js",
-                "src/options/options.js"
+                "src/options/options.js",
+                "js/spotify-web-api.js"
             ],
             "run_at": "document_start"
         }
@@ -34,7 +35,8 @@
         "src/main.js",
         "img/coachella.png",
         "js/boostrap.min.js",
-        "src/options/options.js"
+        "src/options/options.js",
+        "js/spotify-web-api.js"
     ],
     "manifest_version": 2,
     "options_page": "src/options/options.html"

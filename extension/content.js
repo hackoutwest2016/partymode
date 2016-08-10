@@ -14,3 +14,6 @@ var s = document.createElement('script');
 s.src = chrome.extension.getURL('src/main.js');
 (document.head || document.documentElement).appendChild(s);
 
+var s = document.createElement('script');
+s.src = chrome.extension.getURL('js/spotify-web-api.js');
+(document.head || document.documentElement).appendChild(s);
