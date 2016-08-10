@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <!--<link rel="icon" href="favicon.ico">-->
 
-    <title>Sticky Footer Template for Bootstrap</title>
+    <title>Lagett</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -25,10 +25,15 @@
       <div class="page-header">
         <h1 class="text-center">Lagett</h1>
       </div>
-      <p class="lead"> Just booked a festival ticket? Then type in the name of the festival to generate a Spotify playlist with the artists of the line-up.</p>
-      <input type="text" class="form-control" placeholder="Let's get mental." id="festivalNameInput">
+      <p class="lead text-center"> Just booked a festival ticket? Then type in the name of the festival to generate a Spotify playlist with the artists of the line-up.</p>
+      <input type="text" class="form-control" placeholder="Let's check out that line-up." id="festivalNameInput">
       <br>
       <button id="getPlayList" type="button" class="btn btn-default center-block btn-lg" onclick="getPlaylist()">Generate!</button>
+      <br>
+      <p class="lead text-center">Not sure about how much festival your mail is? Let us help. Paste in your mail and we will decide for you.</p>
+      <textarea class="form-control" rows="3" placeholder="Let's check out that mail. "></textarea>
+      <br>
+      <button id="isFestival" type="button" class="btn btn-default center-block btn-lg" onclick="">Festival?</button>
     </div>
     <script>
 	function getPlaylist() {
