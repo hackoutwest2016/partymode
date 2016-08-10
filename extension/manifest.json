@@ -7,14 +7,16 @@
     "permissions": [
         "https://mail.google.com/",
         "https://inbox.google.com/",
-        "https://upload.wikimedia.org/"
+        "https://upload.wikimedia.org/",
+        "https://api.songkick.com/"
     ],
     "content_scripts": [
         {
             "matches": [
                 "https://mail.google.com/*",
                 "https://inbox.google.com/*",
-                "https://upload.wikimedia.org/*"
+                "https://upload.wikimedia.org/*",
+                "https://api.songkick.com/*"
             ],
             "js": [
                 "content.js",

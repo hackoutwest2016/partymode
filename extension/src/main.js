@@ -63,9 +63,6 @@ function addSidebar(threadView, festival_name) {
 
             console.log(img)
 
-            playlist_link = get("http://188.166.158.82:8080/playlist", "event_name=" + festival_name + "?token=" + localStorage.sp_token, null);
-            console.log(playlist_link);
-
             var tpl = "<div style=\"position: relative; left: 0; top: 0;\">" +
                 "<img src=\"<%= event_pic %>\" width=\"100\" height=\"100\" style=\"position: relative; top: 0; left: 0;\"/>" +
                 "<a href=\"<%= playlist_link %>\"><img src=\"<%= spotify_logo %>\" width=\"80\" height=\"80\" style=\"position: absolute; top: 10px; left: 10px; opacity: 0.6;\"/></a>" +
@@ -74,7 +71,7 @@ function addSidebar(threadView, festival_name) {
             var template = _.template(tpl)
                 sidebarForThread.get(threadView).innerHTML = sidebarForThread.get(threadView).innerHTML + template({
                 event_pic: null,
-                playlist_link: playlist_link,
+                playlist_link: getPlaylist(festival_name),
                 spotify_logo: img.src
             });
 
@@ -158,5 +155,142 @@ function containsKeywords(text) {
         return true;
     } else {
         return false;
+    }
+}
+
+function getPlaylist(eventName) {
+    var originalName = eventName;
+    eventName = eventName.replace(" ", "");
+    eventName = eventName.toLowerCase();
+
+    var festivals = {};
+    festivals["coachella"] = "23977814";
+    festivals["hard_summer_festival"] = "23261803";
+    festivals["crssd_festival"] = "25908648";
+    festivals["emmaboda_festival"] = "19733794";
+    festivals["way_out_west"] = "19499249";
+
+    var eventId = festivals[eventName];
+    console.log(eventName);
+    console.log(eventId);
+    console.log(originalName);
+
+    if (eventId === undefined) {
+        throw "Could not find festival.";
+    }
+
+    var spotifyApi = new SpotifyWebApi();
+
+    spotifyApi.setAccessToken(localStorage["sp_token"]);
+
+    var artistNames = getArtists(eventId, spotifyApi);
+    console.log(artistNames);
+    var artists = getSpotifyArtists(artistNames, spotifyApi);
+    var trackIds = getSpotifyTracks(spotifyApi, artists, getSongsPerArtist(artists.length))
+
+    return createSpotifyPlaylist(spotifyApi, trackIds, originalName);
+}
+
+function getArtists(eventId) {
+    Promise.all([
+        get("https://api.songkick.com/api/3.0/events/" + eventId + ".json?apikey=5AiwvQRMAnjap1X8", null, null)
+    ])
+    .then(function (result) {
+        var a = result[0]['resultsPage']['results']['event']['performance']
+        var artists = [];
+
+        for (var i = 0; i < a.length; i++) {
+            console.log(a[i]);
+            artists.push(a[i]["artist"]["displayName"]);
+        }
+        console.log("Arts:", artists);
+        return artists;
+    });
+}
+
+function getSpotifyArtists(artistNames, api) {
+    var artists = [];
+    console.log("ArtistNames: ", artistNames);
+    artistNames.forEach(function(artist) {
+        api.searchArtists(artist, {limit: 1})
+            .then(function(data) {
+                if (!data.artists.items === undefined || !ata.artists.items.length == 0) {
+                    artists.push(data.artists.items[0]);
+                } else {
+                    console.log("Could not find artist: " + artist)
+                }
+            }, function(err) {
+                console.error(err);
+            });
+    });
+
+    return artists;
+}
+
+function getSpotifyTracks(spotifyApi, artists, nrOfTracks) {
+    var trackIds = [];
+    console.log("Get TRACKS artists: ", artists);
+    artists.forEach(function(element, index) {
+        console.log(element);
+        spotifyApi.getArtistTopTracks(element, 'SE')
+            .then(function (data) {
+                console.log(data);
+                for (var i = 0; i < nrOfTracks; i++) {
+                    if (i < data.tracks.length) {
+                        trackIds.push(data.tracks.uri);
+                    }
+                }
+            });
+    });
+    console.log("Track IDs: ", trackIds);
+    return trackIds;
+}
+
+function createSpotifyPlaylist(spotifyApi, trackUris, eventName) {
+    userId = null;
+    playlist = null;
+    spotifyApi.getMe()
+        .then(function (data) {
+            userId = data.id;
+            console.log(data);
+        })
+        .then(function (data) {
+            return spotifyApi.createPlaylist(userId, {name: eventName, public: true});
+        })
+        .then(function (data) {
+            playlist = data;
+            console.log(playlist);
+            spotifyApi.addTracksToPlaylist(userId, playlist.id, trackUris);
+            return playlist.uri;
+        }, function(err) {
+            console.error(err);
+        });
+}
+
+function addTracksToPlaylist(spotifyApi, userId, playlistId, uris) {
+    spotifyApi.addTracksToPlaylist(userId, playlistId, uris, null, function (err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("Added to playlist ", uris);
+        }
+    });
+}
+
+function getSongsPerArtist(artists) {
+    if (artists >= 12) {
+        return 3;
+    } else if (artists >= 10) {
+        return 4;
+    } else if (artists >= 8) {
+        return 5;
+    } else if (artists == 7) {
+        return 6;
+    } else if (artists == 6) {
+        return 7;
+    } else if (artists == 5) {
+        return 8;
+    } else {
+        return 10;
     }
 }
