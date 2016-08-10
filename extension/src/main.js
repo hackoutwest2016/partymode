@@ -26,8 +26,6 @@ if (typeof(args['access_token']) != 'undefined') {
 
 console.log("Saved token: ", localStorage.sp_token);
 
-var sidebarForThread = new WeakMap();
-
 InboxSDK.load('1.0', 'sdk_asdf123_7bf29a335b').then(function(sdk){
 
     sdk.Conversations.registerMessageViewHandler(function(messageView) {
@@ -65,6 +63,9 @@ function addSidebar(threadView, festival_name) {
 
             console.log(img)
 
+            playlist_link = get("http://188.166.158.82:8080/playlist", "event_name=" + festival_name + "?token=" + localStorage.sp_token, null);
+            console.log(playlist_link);
+
             var tpl = "<div style=\"position: relative; left: 0; top: 0;\">" +
                 "<img src=\"<%= event_pic %>\" width=\"100\" height=\"100\" style=\"position: relative; top: 0; left: 0;\"/>" +
                 "<a href=\"<%= playlist_link %>\"><img src=\"<%= spotify_logo %>\" width=\"80\" height=\"80\" style=\"position: absolute; top: 10px; left: 10px; opacity: 0.6;\"/></a>" +
@@ -73,7 +74,7 @@ function addSidebar(threadView, festival_name) {
             var template = _.template(tpl)
                 sidebarForThread.get(threadView).innerHTML = sidebarForThread.get(threadView).innerHTML + template({
                 event_pic: null,
-                playlist_link: "https://open.spotify.com/user/128586398/playlist/0ACRVKod4rWgLydC3Rupjf",
+                playlist_link: playlist_link,
                 spotify_logo: img.src
             });
 
