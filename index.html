@@ -31,21 +31,27 @@
 		<br>
 		<button id="getPlayList" type="button" class="btn btn-default center-block btn-lg" onclick="getPlaylist()">Generate!</button>
 		<br>
-		<p class="lead text-center">Not sure about how much festival your mail is? Let us help. Paste in your mail and we will decide for you.</p>
-		<textarea class="form-control" rows="3" placeholder="Let's check out that mail." id="test_phrase"></textarea>
+		<p class="lead text-center">Not sure about how much festival something is? Let us help. Paste it in and we will decide for you.</p>
+		<textarea class="form-control" rows="3" placeholder="Let's check it out." id="test_phrase"></textarea>
 		<br>
 		<button id="isFestival" type="button" class="btn btn-default center-block btn-lg" onclick="go();">Festival?</button>
 		<br>
 		  <div style="text-align: center;" id="nofestival">
 			<iframe src="http://giphy.com/embed/l0HlUVTXVcbDao7xC?html5=true" width="480" height="271" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-			<p class="lead"> Unfortunately, it wasn't a festival.</p>
+			<p class="lead"> 
+				Unfortunately, it wasn't a festival.
+				<br>
+				How man percent not festival it is? The answer is: <span id="nofestival_probability"></span>%
+			</p>
 		  </div>
 		  <div style="text-align: center;" id="festival">
 			<iframe src="http://giphy.com/embed/m5YDMdUgGPKMw?html5=true" width="480" height="269" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-			<p class="lead">Guess what? Someone is going to a festival!</p>
+			<p class="lead">
+				Guess what? Someone is going to a festival!
+				<br>
+				How man percent festival it is? The answer is: <span id="festival_probability"></span>%
+			</p>
 		  </div>
-        <h2 class="center-block" id="test_result"></h2>
-        <p class="center-block" id="test_probability"></p>
     </div>
     <script>
     (function() {

@@ -175,16 +175,17 @@ var go = function go() {
     var text = document.getElementById("test_phrase").value;
     var scores = Bayes.guess(text);
     var winner = Bayes.extractWinner(scores);
-    document.getElementById("test_result").innerHTML = winner.label;
-    document.getElementById("test_probability").innerHTML = winner.score;
     if (winner.label === "festival") {
-        document.getElementById("festival").style.display = "inline";
+        document.getElementById("festival").style.display = "block";
         document.getElementById("nofestival").style.display = "none";
+        document.getElementById("festival_probability").innerHTML = Math.round(1000*winner.score) / 10;
     } else {
-        document.getElementById("nofestival").style.display = "inline";
+        document.getElementById("nofestival").style.display = "block";
         document.getElementById("festival").style.display = "none";
+        document.getElementById("nofestival_probability").innerHTML = Math.round(1000*winner.score) / 10;
     }
     console.log(scores);
+
 };
 
 // Festival mail training
